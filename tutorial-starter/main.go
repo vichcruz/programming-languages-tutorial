@@ -1,16 +1,15 @@
+// This is the main starting file for the code.
+// You can run this code using `go run main.go`
+
 package main
 
 import (
 	"fmt"
 	"time"
-
-	"parent/concurrentcrawler"
-	"parent/synchronouscrawler"
 )
 
-
-
 func main() {
+	// List of website URLs to crawl
 	websiteURLs := []string{
 		"https://crawler-test.com/content/custom_text",
 		"https://crawler-test.com/content/no_h1",
@@ -28,26 +27,17 @@ func main() {
 		"https://httpstat.us/200",
 		"https://httpstat.us/404",
 		"https://httpstat.us/500",
-		"https://example.org/",
 		"https://www.ecma-international.org/",
-		"https://example.com",
 		"https://httpbin.org/html",
-		"https://httpbingo.org/html",
 		"https://reqres.in/",
 		"https://www.iana.org/domains/reserved",
 	}
+
 	fmt.Println("Number of websites to crawl:", len(websiteURLs))
-
-	// Buffered channel to hold results from concurrent crawler
-	// concResult := make(chan string, len(websiteURLs))
-
-	// Unbuffered channel to hold results from concurrent crawler
-	// Only one send can proceed when a receive is ready
-	concResult := make(chan string)
 
 	// Concurrent part
 	// How it works
-	/* 
+	/*
 		1. Main goroutine starts the concurrent crawler as a goroutine
 		2. Concurrent crawler launches 23 goroutines (one for each URL) - all start fetching simultaneously
 		3. Main goroutine enters the for loop and waits at title := <-concResult
@@ -57,32 +47,33 @@ func main() {
 		7. Third goroutine to finish sends → main receives and prints
 		... and so on until all 23 titles are received
 	*/
-	
 	startConc := time.Now()
-	go concurrentcrawler.ConcCrawl(websiteURLs, concResult)
-	// Collect results from the channel
+	titleResult := make(chan string)
+
+	go ConcCrawl(websiteURLs, titleResult)
+
 	for range websiteURLs {
-		title := <-concResult
-		// This leads to deadlock
-		/*
-		if <-result == "" {
-			fmt.Println("Concurrently fetched title: No title found")
-			} else {
-				fmt.Println("Concurrently fetched title:", <-result)
-				}		
-				*/
-				// The result is already consumed in the if statement
-				// If it's not true another receive operation is attempted leading to deadlock once all sends are done
-				
-				// Correct way
-				if title == "" {
-					fmt.Println("Concurrently fetched title: No title found")
-					} else {
-						fmt.Println("Concurrently fetched title:", title)
-					}
+
+		// WARNING: This implementation is blocking because when we read the channel,
+		// in the if statement, we already consume the value from the channel.
+		// So we need to read it again to print it.
+		// This means that if the first read gets an empty string,
+		// we will not print anything even if the second read has a valid title.
+		// Also, if the first read gets a valid title,
+		// we will read the channel again and get the next title,
+		// which is not what we want.
+
+		if <-titleResult != "" {
+			fmt.Println("Title received: ", <-titleResult)
+		} else {
+			fmt.Println("No title received.")
+		}
+
+		// The correct way is to read the channel once and store the value in a variable.
+		// 1. Build this function that prints the titles received.
+
 	}
-	
-				
+
 	durationConc := time.Since(startConc)
 	fmt.Println("Concurrent crawling duration:", durationConc)
 
@@ -90,18 +81,12 @@ func main() {
 
 	// Synchronous part
 	startSync := time.Now()
-	syncTitles := synchronouscrawler.SyncCrawl(websiteURLs)
-	
-	for i := range websiteURLs {
-		title := syncTitles[i]
-		if title == "" {
-			fmt.Println("Synchronously fetched title: No title found")
-			} else {
-				fmt.Println("Synchronously fetched title:", title)
-			}
-		}
-		
-	durationSync := time.Since(startSync)
-	fmt.Println("Synchronous crawling duration:", durationSync)
 
+	titles := SyncCrawl(websiteURLs)
+
+	fmt.Println("All Titles received: ", len(titles))
+
+	elapsedSync := time.Since(startSync)
+
+	fmt.Println("Synchronous crawling duration:", elapsedSync)
 }
