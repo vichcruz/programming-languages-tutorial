@@ -54,7 +54,7 @@ func main() {
 
 	for range websiteURLs {
 
-		// WARNING: This implementation is blocking because when we read the channel,
+		// WARNING: This implementation is wrong because when we read the channel,
 		// in the if statement, we already consume the value from the channel.
 		// So we need to read it again to print it.
 		// This means that if the first read gets an empty string,
