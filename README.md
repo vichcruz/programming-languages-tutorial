@@ -26,14 +26,15 @@ In the Tutorial session, we will implement a simple web crawler that fetches the
 
 ## Running the Code
 1. Open a terminal and navigate to the project directory.
-2. The **exercise code** is located in the `tutorial-starter` folder. You can run it using:
+2. The **exercise code** is located in the `version-0` folder. You can run it using:
    ```bash
-   cd tutorial-starter
+   cd version-0
    go run .
    ```
-3. The **solution code** is located in the `solution` folder. Please don't look at it yet. If you want to see the expected output of the crawler, you can run it using:
+3. We will progressively work on versions 1 to 4 during the tutorial.
+3. The **complete solution code** is located in the `version-5` folder. Please don't look at it yet. If you want to see the expected output of the crawler, you can run it using:
    ```bash
-   cd solution
+   cd version-5
    go run .
    ``` 
 
