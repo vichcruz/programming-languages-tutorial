@@ -35,6 +35,9 @@ func main() {
 
 	fmt.Println("Number of websites to crawl:", len(websiteURLs))
 
+	// Concurrent part
+	go ConcCrawl(websiteURLs)
+
 	// Synchronous part
 	startSync := time.Now()
 

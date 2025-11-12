@@ -35,6 +35,27 @@ func main() {
 
 	fmt.Println("Number of websites to crawl:", len(websiteURLs))
 
+	// Concurrent part
+
+	// Prepare channel to receive titles
+	titlesChan := make(chan string)
+
+	startConc := time.Now()
+	ConcCrawl(websiteURLs, titlesChan)
+
+	for range websiteURLs {
+		title := <-titlesChan
+		if title != "" {
+			fmt.Println("Title received: ", title)
+		} else {
+			fmt.Println("No title received.")
+		}
+	}
+
+	elapsedConc := time.Since(startConc)
+
+	fmt.Println("Concurrent crawling duration:", elapsedConc)
+	fmt.Println("---------------------------------------------------")
 	// Synchronous part
 	startSync := time.Now()
 
