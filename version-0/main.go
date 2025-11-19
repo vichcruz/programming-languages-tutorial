@@ -1,5 +1,5 @@
 // This is the main starting file for the code.
-// You can run this code using `go run main.go`
+// You can run this code using `go run .`
 
 package main
 
