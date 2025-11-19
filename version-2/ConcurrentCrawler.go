@@ -7,9 +7,9 @@ import (
 func ConcCrawl(urls []string, titlesChan chan string) {
 	fmt.Println("Start concurrent crawling")
 	for _, url := range urls {
-		go func(u string) {
-			title := Fetch(u)
+		go func() {
+			title := Fetch(url)
 			titlesChan <- title
-		}(url)
+		}()
 	}
 }

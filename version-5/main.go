@@ -48,7 +48,7 @@ func main() {
 		... and so on until all 23 titles are received
 	*/
 	startConc := time.Now()
-	titleResult := make(chan string)
+	titleResult := make(chan string, len(websiteURLs))
 
 	go ConcCrawl(websiteURLs, titleResult)
 

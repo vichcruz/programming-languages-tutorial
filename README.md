@@ -44,3 +44,9 @@ In the Tutorial session, we will implement a simple web crawler that fetches the
 - `ConcurrentCrawler.go`: Implements the concurrent web crawler using goroutines.
 - `go.mod`: Go module file specifying dependencies.
 
+### Version Differences
+- `version-0`: Basic synchronous web crawler.
+- `version-1`: Introduces goroutines for concurrent crawling, but without proper synchronization or result collection.
+- `version-2`: Adds a channel to receive titles from concurrent goroutines, but has a bug in the receiving loop.
+- `version-3`: Fixes the channel receiving logic and adds timing measurements to compare concurrent vs synchronous performance.
+- `version-5`: Complete solution with proper concurrent crawler using `sync.WaitGroup` for goroutine synchronization and buffered channel for result collection.
